@@ -1,1 +1,16 @@
-<p>dashboard works!</p>
+<div class="container-fluid">
+  <h4 class="fw-bold mb-4">Dashboard Overview</h4>
+
+  <div class="row g-3">
+    @for (stat of stats; track stat.title) {
+      <div class="col-12 col-sm-6 col-md-3">
+        <app-stat-card
+          [title]="stat.title"
+          [count]="stat.count"
+          [icon]="stat.icon"
+          [color]="stat.color"
+        ></app-stat-card>
+      </div>
+    }
+  </div>
+</div>

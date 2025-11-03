@@ -1,1 +1,16 @@
-<p>users works!</p>
+<div class="container mt-4">
+  <h3 class="mb-4 fw-bold">Manage Users</h3>
+  <app-user-table
+    [users]="users"
+    (viewUser)="openUserDetails($event)"
+    (verifyUser)="verifyUser($event)"
+    (rejectUser)="rejectUser($event)">
+  </app-user-table>
+
+  @if (selectedUser) {
+    <app-user-modal
+      [user]="selectedUser"
+      (closeModal)="closeUserDetails()">
+    </app-user-modal>
+  }
+</div>

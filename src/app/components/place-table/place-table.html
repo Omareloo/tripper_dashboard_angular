@@ -1,0 +1,31 @@
+<table class="table table-hover align-middle shadow-sm">
+  <thead class="table-light">
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>City</th>
+      <th>Country</th>
+      <th>Rating</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (place of places; track place._id) {
+      <tr>
+        <td>{{ place._id || '-' }}</td>
+        <td>{{ place.name }}</td>
+        <td>{{ place.address.city }}</td>
+        <td>{{ place.address.country }}</td>
+        <td>{{ place.starRating || 0 }}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="onEdit.emit(place)">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" (click)="onDelete.emit(place._id || '')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -1,0 +1,70 @@
+<div class="modal-backdrop fade show"></div>
+<div class="custom-modal card shadow-lg">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">{{ editMode ? 'Edit Place' : 'Add New Place' }}</h5>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="save()" enctype="multipart/form-data" #placeForm="ngForm">
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="formData.name"
+          name="name"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea
+          class="form-control"
+          [(ngModel)]="formData.description"
+          name="description"
+          required
+        ></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Country</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="formData.address.country"
+            name="addressCountry"
+            required
+          />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">City</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="formData.address.city"
+            name="addressCity"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Images</label>
+        <input
+          type="file"
+          class="form-control"
+          (change)="onFilesSelected($event)"
+          multiple
+        />
+      </div>
+    </form>
+  </div>
+
+  <div class="card-footer text-end">
+    <button class="btn btn-secondary me-2" (click)="onClose.emit()">Cancel</button>
+    <button class="btn btn-primary" (click)="save()">
+      {{ editMode ? 'Save Changes' : 'Add Place' }}
+    </button>
+  </div>
+</div>
