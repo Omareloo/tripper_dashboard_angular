@@ -1,0 +1,15 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <mat-toolbar color="primary">Tripper Admin</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/" routerLinkActive="active"><mat-icon>dashboard</mat-icon> Dashboard</a>
+      <a mat-list-item routerLink="/users" routerLinkActive="active"><mat-icon>people</mat-icon> Users</a>
+      <a mat-list-item routerLink="/hosts" routerLinkActive="active"><mat-icon>supervisor_account</mat-icon> Hosts</a>
+      <a mat-list-item routerLink="/places" routerLinkActive="active"><mat-icon>place</mat-icon> Places</a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
