@@ -1,0 +1,48 @@
+@if (experience) {
+  <div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title">{{ experience.name }} Details</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal.emit()"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <img
+                [src]="experience.images[0] || 'https://via.placeholder.com/300'"
+                class="img-fluid rounded mb-3"
+                alt="Experience image"
+              />
+            </div>
+            <div class="col-md-6">
+              <p><b>Description:</b> {{ experience.description || 'No description' }}</p>
+              <p><b>Price:</b> \${{ experience.price }}</p>
+              <p><b>Rating:</b> ★ {{ experience.starRating }}</p>
+              <p><b>City:</b> {{ experience.address.city }}</p>
+              <p><b>Country:</b> {{ experience.address.country }}</p>
+              @if (experience.dates.length) {
+                <p><b>Dates:</b> {{ experience.dates.join(', ') }}</p>
+              }
+              @if (experience.activities.length) {
+<p><b>Activities:</b> {{ activityTitles }}</p>
+              }
+              @if (experience.hostName) {
+                <p><b>Host:</b> {{ experience.hostName }} ({{ experience.hostEmail }})</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModal.emit()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

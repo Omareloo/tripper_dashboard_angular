@@ -1,0 +1,16 @@
+<div class="container mt-4">
+  <h3 class="mb-4 fw-bold">Hotels Management</h3>
+
+  <app-hotel-table
+    [hotels]="hotels"
+    (viewHotel)="openHotelDetails($event)"
+    (deleteHotel)="deleteHotel($event)">
+  </app-hotel-table>
+
+  @if (selectedHotel) {
+    <app-hotel-modal
+      [hotel]="selectedHotel"
+      (closeModal)="closeHotelDetails()">
+    </app-hotel-modal>
+  }
+</div>

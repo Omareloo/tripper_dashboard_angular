@@ -14,8 +14,10 @@ export class Sidebar {
   links = [
     { path: '/', label: 'Dashboard', icon: 'bi-speedometer2' },
     { path: '/users', label: 'Users', icon: 'bi-people' },
-    { path: '/hosts', label: 'Hosts', icon: 'bi-person-gear' },
     { path: '/places', label: 'Places', icon: 'bi-geo-alt' },
+    { path: '/hotels', label: 'Hotels', icon: 'bi-building' },
+    { path: '/reservations', label: 'Reservations', icon: 'bi-calendar-check' },
+    { path: '/experiences', label: 'Experiences', icon: 'bi-journal-code' },
   ];
 
   setActive(link: string) {
