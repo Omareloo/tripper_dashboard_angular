@@ -12,7 +12,8 @@
       </tr>
     </thead>
     <tbody class="text-center">
-      @for (hotel of hotels; track hotel.id) {
+      @for (hotel of hotels; track $index)
+ {
         <tr>
           <td>
             <img
@@ -35,9 +36,6 @@
           <td>
             <button class="btn btn-sm btn-info me-2" (click)="onView(hotel)">
               <i class="bi bi-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="onDelete(hotel)">
-              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>

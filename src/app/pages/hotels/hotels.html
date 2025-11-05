@@ -3,8 +3,7 @@
 
   <app-hotel-table
     [hotels]="hotels"
-    (viewHotel)="openHotelDetails($event)"
-    (deleteHotel)="deleteHotel($event)">
+    (viewHotel)="openHotelDetails($event)">
   </app-hotel-table>
 
   @if (selectedHotel) {
