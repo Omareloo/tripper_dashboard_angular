@@ -18,16 +18,4 @@ export class UserTable {
   onView(user: User) {
     this.viewUser.emit(user);
   }
-
-  onVerify(user: User) {
-    if (confirm(`Approve verification for ${user.name}?`)) {
-      this.verifyUser.emit(user);
-    }
-  }
-
-  onReject(user: User) {
-    if (confirm(`Reject verification for ${user.name}?`)) {
-      this.rejectUser.emit(user);
-    }
-  }
 }

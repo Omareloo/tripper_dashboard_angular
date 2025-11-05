@@ -1,54 +1,65 @@
-import { Component } from '@angular/core';
-import { User } from '../../models/user';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user';
 import { UserTable } from '../../components/user-table/user-table';
 import { UserModal } from '../../components/user-modal/user-modal';
+
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, UserTable,UserModal],
+  standalone: true,
+  imports: [CommonModule, UserTable, UserModal],
   templateUrl: './users.html',
-  styleUrl: './users.css',
+  styleUrls: ['./users.css'],
 })
-export class Users {
-  users: User[] = [
-    {
-      id: 1,
-      name: 'Omar Hossam',
-      email: 'omar@example.com',
-      phone: '01000000000',
-      role: ['host'],
-      activeRole: 'guest',
-      isConfirmed: true,
-      isVerified: 'pending',
-      identityImageUrl: 'https://via.placeholder.com/300x200?text=ID+Card'
-    },
-    {
-      id: 2,
-      name: 'Sara Ahmed',
-      email: 'sara@example.com',
-      phone: '01111111111',
-      role: ['guest'],
-      activeRole: 'guest',
-      isConfirmed: false,
-      isVerified: 'notVerified'
-    }
-  ];
-
+export class Users implements OnInit {
+  users: User[] = [];
+  filteredUsers: User[] = [];
   selectedUser: User | null = null;
 
-  openUserDetails(user: User) {
+  constructor(private userService: UserService) {}
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers().subscribe((res) => {
+      this.users = res;
+      this.filteredUsers = res;
+    });
+  }
+
+ filterByStatus(status: string) {
+  if (!status) {
+    this.filteredUsers = this.users;
+  } else {
+    this.filteredUsers = this.users.filter(
+      (u) => u.isVerified?.toLowerCase() === status.toLowerCase()
+    );
+  }
+}
+
+
+  openUserModal(user: User) {
     this.selectedUser = user;
   }
 
-  closeUserDetails() {
+  closeUserModal() {
     this.selectedUser = null;
   }
 
   verifyUser(user: User) {
-    user.isVerified = 'verified';
+    this.userService.verifyUser(user._id, 'verified').subscribe(() => {
+      this.loadUsers();
+      this.closeUserModal();
+    });
   }
+rejectUser(user: User) {
+  this.userService.verifyUser(user._id, 'rejected').subscribe(() => {
+    this.loadUsers();
+    this.closeUserModal();
+  });
+}
 
-  rejectUser(user: User) {
-    user.isVerified = 'rejected';
-  }
 }

@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody class="text-center">
-      @for (user of users; track user.id) {
+      @for (user of users; track user._id) {
         <tr>
           <td>
             <img
@@ -26,32 +26,30 @@
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
-          <td>{{ user.role.join(', ') }}</td>
+        <td>{{ user.role.join(', ') || 'No Role' }}</td>
+
           <td>
-            <span
-              class="badge"
-              [ngClass]="user.isVerified ? 'bg-success' : 'bg-warning text-dark'"
-            >
-              {{ user.isVerified ? 'Verified' : 'Pending' }}
-            </span>
+          <span class="badge" [ngClass]="{
+  'bg-success': user.isVerified === 'verified',
+  'bg-danger': user.isVerified === 'rejected',
+  'bg-warning text-dark': user.isVerified === 'pending',
+  'bg-secondary': user.isVerified === 'notVerified' || !user.isVerified
+}">
+  {{
+    user.isVerified === 'verified'
+      ? 'Verified'
+      : user.isVerified === 'rejected'
+      ? 'Rejected'
+      : user.isVerified === 'pending'
+      ? 'Pending'
+      : 'Not Verified'
+  }}
+</span>
+
           </td>
           <td>
             <button class="btn btn-sm btn-info me-2" (click)="onView(user)">
               <i class="bi bi-eye"></i>
-            </button>
-            <button
-              class="btn btn-sm btn-success me-2"
-              (click)="onVerify(user)"
-              [disabled]="user.isVerified"
-            >
-              <i class="bi bi-check2-circle"></i>
-            </button>
-            <button
-              class="btn btn-sm btn-danger"
-              (click)="onReject(user)"
-              [disabled]="!user.isVerified"
-            >
-              <i class="bi bi-x-circle"></i>
             </button>
           </td>
         </tr>

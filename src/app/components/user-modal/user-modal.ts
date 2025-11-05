@@ -12,4 +12,6 @@ import { User } from '../../models/user';
 export class UserModal {
   @Input() user: User | null = null;
   @Output() closeModal = new EventEmitter<void>();
+  @Output() verifyUser = new EventEmitter<User>();
+  @Output() rejectUser = new EventEmitter<User>();
 }

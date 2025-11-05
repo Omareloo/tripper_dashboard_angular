@@ -1,57 +1,67 @@
 @if (user) {
-  <div class="modal fade show d-block" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title">User Details</h5>
-          <button
-            type="button"
-            class="btn-close btn-close-white"
-            (click)="closeModal.emit()"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <img
-                [src]="user.image || 'https://via.placeholder.com/120'"
-                class="rounded-circle mb-2"
-                width="120"
-                height="120"
-                alt="User image"
-              />
-              <p><strong>{{ user.name }}</strong></p>
-            </div>
-            <div class="col-md-8">
-              <ul class="list-group">
-                <li class="list-group-item"><b>Email:</b> {{ user.email }}</li>
-                <li class="list-group-item"><b>Phone:</b> {{ user.phone }}</li>
-                <li class="list-group-item"><b>Role(s):</b> {{ user.role.join(', ') }}</li>
-                <li class="list-group-item"><b>Active Role:</b> {{ user.activeRole }}</li>
-                <li class="list-group-item">
-                  <b>Verification:</b>
-                  {{ user.isVerified ? 'Verified' : 'Pending' }}
-                </li>
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">User Details</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeModal.emit()"></button>
+      </div>
 
-                @if (user.identityImageUrl) {
-                  <li class="list-group-item">
-                    <b>ID Uploaded:</b><br />
-                    <img
-                      [src]="user.identityImageUrl"
-                      class="img-thumbnail mt-2"
-                      width="200"
-                      alt="Identity Image"
-                    />
-                  </li>
-                }
-              </ul>
-            </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <img [src]="user.image || 'https://via.placeholder.com/120'" class="rounded-circle mb-2" width="120"
+              height="120" alt="User image" />
+            <p><strong>{{ user.name }}</strong></p>
+            <p><b>ID:</b> {{ user._id }}</p>
+          </div>
+
+          <div class="col-md-8">
+            <ul class="list-group">
+              <li class="list-group-item"><b>Email:</b> {{ user.email }}</li>
+              <li class="list-group-item"><b>Phone:</b> {{ user.phone }}</li>
+              <li class="list-group-item"><b>Role(s):</b> {{ user.role.join(', ') }}</li>
+              <li class="list-group-item"><b>Active Role:</b> {{ user.activeRole }}</li>
+              <li class="list-group-item">
+                <b>Verification:</b>
+                <span class="badge" [ngClass]="{
+      'bg-success': user.isVerified === 'verified',
+      'bg-danger': user.isVerified === 'rejected',
+      'bg-warning text-dark': user.isVerified === 'pending',
+      'bg-secondary': user.isVerified === 'notVerified' || !user.isVerified
+    }">
+                  {{
+                  user.isVerified === 'verified'
+                  ? 'Verified'
+                  : user.isVerified === 'rejected'
+                  ? 'Rejected'
+                  : user.isVerified === 'pending'
+                  ? 'Pending Approval'
+                  : 'Not Verified'
+                  }}
+                </span>
+              </li>
+              @if (user.identityImageUrl) {
+              <li class="list-group-item">
+                <b>Identity Image:</b><br />
+                <img [src]="user.identityImageUrl" class="img-thumbnail mt-2" width="200" alt="Identity Image" />
+              </li>
+              }
+            </ul>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="closeModal.emit()">Close</button>
-        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-success" (click)="verifyUser.emit(user)">
+          Verify
+        </button>
+        <button class="btn btn-danger" (click)="rejectUser.emit(user)">
+          Reject
+        </button>
+        <button class="btn btn-secondary" (click)="closeModal.emit()">Close</button>
       </div>
     </div>
   </div>
+</div>
 }
