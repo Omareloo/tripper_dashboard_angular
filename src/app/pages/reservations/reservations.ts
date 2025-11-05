@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { ReservationService } from '../../services/reservation.service';
 import { Reservation } from '../../models/reservation';
 import { ReservationTable } from '../../components/reservation-table/reservation-table';
 import { ReservationModal } from '../../components/reservation-modal/reservation-modal';
@@ -7,48 +9,26 @@ import { ReservationModal } from '../../components/reservation-modal/reservation
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, ReservationTable, ReservationModal],
+  imports: [CommonModule, HttpClientModule, ReservationTable, ReservationModal],
   templateUrl: './reservations.html',
-  styleUrl: './reservations.css'
+  styleUrl: './reservations.css',
 })
-export class Reservations {
-  reservations: Reservation[] = [
-    {
-      id: '1',
-      guestName: 'Ahmed Hassan',
-      guestEmail: 'ahmed@example.com',
-      hotelName: 'Grand Palace Hotel',
-      checkIn: '2025-10-01',
-      checkOut: '2025-10-05',
-      totalPrice: 1500,
-      guestsCount: 2,
-      status: 'confirmed'
-    },
-    {
-      id: '2',
-      guestName: 'Sara Ali',
-      guestEmail: 'sara@example.com',
-      experienceName: 'Nile Boat Tour',
-      checkIn: '2025-11-10',
-      checkOut: '2025-11-10',
-      totalPrice: 500,
-      guestsCount: 3,
-      status: 'pending'
-    },
-    {
-      id: '3',
-      guestName: 'Omar Hossam',
-      guestEmail: 'omar@example.com',
-      hotelName: 'Desert Sands Resort',
-      checkIn: '2025-11-12',
-      checkOut: '2025-11-15',
-      totalPrice: 2000,
-      guestsCount: 4,
-      status: 'completed'
-    }
-  ];
-
+export class Reservations implements OnInit {
+  reservations: Reservation[] = [];
   selectedReservation: Reservation | null = null;
+
+  constructor(private reservationService: ReservationService) {}
+
+  ngOnInit(): void {
+    this.loadReservations();
+  }
+
+  loadReservations() {
+    this.reservationService.getAllReservations().subscribe({
+      next: (data) => (this.reservations = data),
+      error: (err) => console.error('Error fetching reservations:', err),
+    });
+  }
 
   openReservationDetails(reservation: Reservation) {
     this.selectedReservation = reservation;
@@ -56,9 +36,5 @@ export class Reservations {
 
   closeReservationDetails() {
     this.selectedReservation = null;
-  }
-
-  deleteReservation(reservation: Reservation) {
-    this.reservations = this.reservations.filter(r => r.id !== reservation.id);
   }
 }

@@ -3,8 +3,7 @@
 
   <app-reservation-table
     [reservations]="reservations"
-    (viewReservation)="openReservationDetails($event)"
-    (deleteReservation)="deleteReservation($event)">
+    (viewReservation)="openReservationDetails($event)">
   </app-reservation-table>
 
   @if (selectedReservation) {
