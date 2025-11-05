@@ -4,7 +4,8 @@
   <app-experience-table
     [experiences]="experiences"
     (viewExperience)="openExperienceDetails($event)"
-    (deleteExperience)="deleteExperience($event)">
+    (deleteExperience)="deleteExperience($event)"
+    >
   </app-experience-table>
 
   @if (selectedExperience) {

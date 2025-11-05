@@ -31,8 +31,12 @@ export class HttpService {
     return this.http.patch<T>(`${this.baseUrl}/${endpoint}`, data, {
       headers: this.getHeaders(),
     });
+  } 
+  put<T>(endpoint: string, data: any): Observable<T> {
+    return this.http.put<T>(`${this.baseUrl}/${endpoint}`, data, {
+      headers: this.getHeaders(),
+    });
   }
-
   delete<T>(endpoint: string): Observable<T> {
     return this.http.delete<T>(`${this.baseUrl}/${endpoint}`, {
       headers: this.getHeaders(),

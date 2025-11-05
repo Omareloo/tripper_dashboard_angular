@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlaceTable } from '../../components/place-table/place-table';
 import { PlaceModal } from '../../components/place-modal/place-modal';
 import { Place } from '../../models/place';
+import { PlacesService } from '../../services/places';
 
 @Component({
   selector: 'app-places',
@@ -11,29 +12,29 @@ import { Place } from '../../models/place';
   templateUrl: './places.html',
   styleUrl: './places.css',
 })
-export class Places {
+export class Places implements OnInit {
   showModal = false;
   editMode = false;
   selectedPlace: Place | null = null;
+places: any[] = [];
 
-  places: Place[] = [
-    {
-      _id: '1',
-      name: 'Cairo Tower',
-      description: 'Famous tower in Cairo',
-      images: [],
-      address: { country: 'Egypt', city: 'Cairo' },
-      starRating: 4.5,
+  constructor(private placesService: PlacesService) {}
+
+  ngOnInit(): void {
+    this.getPlaces();
+  }
+
+getPlaces() {
+  this.placesService.getAllPlaces().subscribe({
+    next: (res: any) => {
+      console.log('Fetched places:', res);
+      this.places = res.data;  // خد الـ array من داخل الـ data
     },
-    {
-      _id: '2',
-      name: 'Luxor Temple',
-      description: 'Ancient Egyptian temple',
-      images: [],
-      address: { country: 'Egypt', city: 'Luxor' },
-      starRating: 4.8,
-    },
-  ];
+    error: (err) => console.error('Error loading places:', err),
+  });
+}
+
+
 
   openAddModal() {
     this.editMode = false;
@@ -52,16 +53,31 @@ export class Places {
   }
 
   savePlace(formData: FormData) {
-  console.log('Ready to send:', Array.from(formData.entries()));
-
-  // هنا بعدين هنستخدم service:
-  // this.http.post('http://127.0.0.1:4000/places', formData).subscribe(...);
-
-  this.closeModal();
-}
-
+    if (this.editMode && this.selectedPlace?._id) {
+      this.placesService.updatePlace(this.selectedPlace._id, formData).subscribe({
+        next: () => {
+          this.getPlaces();
+          this.closeModal();
+        },
+        error: (err) => console.error('Error updating place:', err),
+      });
+    } else {
+      this.placesService.createPlace(formData).subscribe({
+        next: () => {
+          this.getPlaces();
+          this.closeModal();
+        },
+        error: (err) => console.error('Error creating place:', err),
+      });
+    }
+  }
 
   deletePlace(id: string) {
-    this.places = this.places.filter((p) => p._id !== id);
+    this.placesService.deletePlace(id).subscribe({
+      next: () => {
+        this.places = this.places.filter((p) => p._id !== id);
+      },
+      error: (err) => console.error('Error deleting place:', err),
+    });
   }
 }

@@ -1,16 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Place } from '../../models/place';
 
 @Component({
-  selector: 'app-place-table',
+  selector: 'place-table',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './place-table.html',
-  styleUrl: './place-table.css',
+  styleUrls: ['./place-table.css'],
 })
 export class PlaceTable {
-  @Input() places: Place[] = [];
-  @Output() onEdit = new EventEmitter<Place>();
+  @Input() places: any[] = [];
+  @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<string>();
 }

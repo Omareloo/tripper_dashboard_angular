@@ -18,9 +18,8 @@ export class ExperienceTable {
     this.viewExperience.emit(experience);
   }
 
-  onDelete(experience: Experience) {
-    if (confirm(`Are you sure you want to delete "${experience.name}"?`)) {
-      this.deleteExperience.emit(experience);
-    }
-  }
+onDelete(experience: Experience) {
+  this.deleteExperience.emit(experience); // لو اسم الفيلد _id
+}
+
 }
