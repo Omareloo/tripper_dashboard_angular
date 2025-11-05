@@ -15,18 +15,19 @@
       @for (experience of experiences; track experience.id) {
         <tr>
           <td>
-            <img
-              [src]="experience.images[0] || 'https://via.placeholder.com/80'"
-              width="80"
-              height="60"
-              class="rounded"
-              alt="Experience image"
-            />
+        <img
+  [src]="experience?.images?.[0]"
+  width="80"
+  height="60"
+  class="rounded"
+  alt="Experience image"
+/>
+
           </td>
           <td>{{ experience.name }}</td>
           <td>{{ experience.address.city }}</td>
           <td>{{ experience.address.country }}</td>
-          <td>\${{ experience.price }}</td>
+          <td>${{ experience.price }}</td>
           <td>
             <span class="badge bg-warning text-dark">
               ★ {{ experience.starRating.toFixed(1) }}

@@ -6,11 +6,11 @@
     </button>
   </div>
 
-  <app-place-table
-    [places]="places"
-    (onEdit)="openEditModal($event)"
-    (onDelete)="deletePlace($event)"
-  ></app-place-table>
+<place-table 
+  [places]="places" 
+  (onEdit)="openEditModal($event)" 
+  (onDelete)="deletePlace($event)">
+</place-table>
 
   <app-place-modal
     *ngIf="showModal"

@@ -1,7 +1,8 @@
 <table class="table table-hover align-middle shadow-sm">
   <thead class="table-light">
     <tr>
-      <th>#</th>
+      <!-- <th>#</th> -->
+      <th>image</th>
       <th>Name</th>
       <th>City</th>
       <th>Country</th>
@@ -12,16 +13,33 @@
   <tbody>
     @for (place of places; track place._id) {
       <tr>
-        <td>{{ place._id || '-' }}</td>
-        <td>{{ place.name }}</td>
-        <td>{{ place.address.city }}</td>
-        <td>{{ place.address.country }}</td>
-        <td>{{ place.starRating || 0 }}</td>
-        <td class="text-center">
-          <button class="btn btn-sm btn-outline-primary me-2" (click)="onEdit.emit(place)">
+        <!-- <td>{{ place._id || '-' }}</td> -->
+ <td>
+        <img
+  [src]="place?.images?.[0]"
+  width="80"
+  height="60"
+  class="rounded"
+  alt="place image"
+/>
+
+          </td>        <td>{{ place.name }}</td>
+        <td>{{ place.address?.city }}</td>
+        <td>{{ place.address?.country }}</td>
+<td>
+            <span class="badge bg-warning text-dark">
+              ★ {{ place.starRating.toFixed(1) }}
+            </span>
+          </td>         <td class="text-center">
+          <button 
+            class="btn btn-sm btn-outline-primary me-2" 
+            (click)="onEdit.emit(place)">
             <i class="bi bi-pencil"></i>
           </button>
-          <button class="btn btn-sm btn-outline-danger" (click)="onDelete.emit(place._id || '')">
+
+          <button 
+            class="btn btn-sm btn-outline-danger" 
+            (click)="onDelete.emit(place._id ?? '')">
             <i class="bi bi-trash"></i>
           </button>
         </td>
