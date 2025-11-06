@@ -1,5 +1,6 @@
 export interface Experience {
   id: string;
+  _id?: string;
   name: string;
   description?: string;
   images: string[];
