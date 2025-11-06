@@ -21,7 +21,7 @@ export class ExperienceComponent implements OnInit {
 
   ngOnInit(): void {
   let  data =  this.getExperiences();
-  console.log(data);
+  // console.log(data);
   }
 
   getExperiences() {
@@ -38,8 +38,19 @@ closeExperienceDetails() {
   this.selectedExperience = null;
 }
 
-deleteExperience(exp: Experience) {
+deleteExperience(experience: any) {
+if (!experience?._id) {
+    console.error('Experience id is missing!', experience);
+    return;
+  }
 
+  this.experienceService.deleteExperience(experience._id).subscribe({
+    next: () => {
+      console.log('Deleted successfully');
+      this.getExperiences();
+    },
+    error: (err) => console.error('Error deleting experience: ', err)
+  });
   
 }
 
