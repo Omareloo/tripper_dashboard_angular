@@ -19,7 +19,10 @@ export class ExperienceTable {
   }
 
 onDelete(experience: Experience) {
-  this.deleteExperience.emit(experience); // لو اسم الفيلد _id
+  this.deleteExperience.emit(experience); 
+}
+trackById(index: number, experience: any) {
+  return experience.id; // أو أي مفتاح فريد عندك
 }
 
 }
