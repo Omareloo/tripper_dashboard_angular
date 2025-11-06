@@ -9,7 +9,10 @@
 <place-table 
   [places]="places" 
   (onEdit)="openEditModal($event)" 
-  (onDelete)="deletePlace($event)">
+  (onDelete)="deletePlace($event)"
+  (onView)="ViewPlace($event)"  
+  >
+
 </place-table>
 
   <app-place-modal
@@ -17,6 +20,9 @@
     [editMode]="editMode"
     [place]="selectedPlace"
     (onClose)="closeModal()"
+    [viewMode]="viewMode"
     (onSave)="savePlace($event)"
   ></app-place-modal>
+
+ 
 </div>
