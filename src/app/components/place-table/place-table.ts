@@ -12,4 +12,9 @@ export class PlaceTable {
   @Input() places: any[] = [];
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<string>();
+  @Output() onView = new EventEmitter<string>();
+
+  onViewPlace(placeId: string) {
+        this.onView.emit(placeId);
+  }
 }

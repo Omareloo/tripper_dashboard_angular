@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Place } from '../../models/place';
@@ -10,13 +10,15 @@ import { Place } from '../../models/place';
   templateUrl: './place-modal.html',
   styleUrl: './place-modal.css',
 })
-export class PlaceModal {
+export class PlaceModal implements OnChanges {
   @Input() editMode = false;
+  @Input() viewMode = false; // 👁️ إضافة وضع العرض فقط
   @Input() place: Place | null = null;
+
   @Output() onClose = new EventEmitter<void>();
   @Output() onSave = new EventEmitter<FormData>();
 
-  formData: Place = {
+  formData: any = {
     name: '',
     description: '',
     images: [],
@@ -25,9 +27,12 @@ export class PlaceModal {
 
   selectedFiles: File[] = [];
 
-  ngOnInit() {
-    if (this.editMode && this.place) {
-      this.formData = { ...this.place };
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['place'] && this.place) {
+      this.formData = {
+        ...this.place,
+        address: this.place.address || { country: '', city: '' },
+      };
     }
   }
 
@@ -37,6 +42,8 @@ export class PlaceModal {
   }
 
   save() {
+    if (this.viewMode) return; // ❌ لا يتم الحفظ في وضع العرض فقط
+
     const form = new FormData();
     form.append('name', this.formData.name);
     form.append('description', this.formData.description);
@@ -44,7 +51,6 @@ export class PlaceModal {
     form.append('address[city]', this.formData.address.city);
 
     this.selectedFiles.forEach(file => form.append('images', file));
-
     this.onSave.emit(form);
   }
 }
