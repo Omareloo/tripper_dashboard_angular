@@ -1,62 +1,96 @@
-import { Component } from '@angular/core';
-import { Place } from '../../models/place';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlaceModal } from '../../components/place-modal/place-modal';
 import { PlaceTable } from '../../components/place-table/place-table';
+import { PlaceModal } from '../../components/place-modal/place-modal';
+import { Place } from '../../models/place';
+import { PlacesService } from '../../services/places';
 
 @Component({
   selector: 'app-places',
+  standalone: true,
+  imports: [CommonModule, PlaceTable, PlaceModal],
   templateUrl: './places.html',
-    imports: [CommonModule, PlaceModal,PlaceTable], // ❌ مفيش PlaceTable هنا
-
-  styleUrls: ['./places.css']
+  styleUrl: './places.css',
 })
-export class PlacesComponent {
-  places: Place[] = [];
+export class Places implements OnInit {
   showModal = false;
   editMode = false;
-  viewMode = false; // 👁️ وضع العرض فقط
   selectedPlace: Place | null = null;
+   places: any[] = [];
+
+  constructor(private placesService: PlacesService) {}
+
+  ngOnInit(): void {
+    this.getPlaces();
+  }
+
+getPlaces() {
+  this.placesService.getAllPlaces().subscribe({
+    next: (res: any) => {
+      console.log('Fetched places:', res);
+      this.places = res.data;  // خد الـ array من داخل الـ data
+    },
+    error: (err) => console.error('Error loading places:', err),
+  });
+}
+
+
 
   openAddModal() {
-    this.selectedPlace = null;
     this.editMode = false;
-    this.viewMode = false;
+    this.selectedPlace = null;
     this.showModal = true;
   }
 
   openEditModal(place: Place) {
-    this.selectedPlace = place;
     this.editMode = true;
-    this.viewMode = false;
-    this.showModal = true;
-  }
-
-  ViewPlace(place: Place) {
-    this.selectedPlace = place;
-    this.editMode = false;
-    this.viewMode = true; // ✅ تفعيل وضع العرض فقط
+    this.selectedPlace = { ...place };
     this.showModal = true;
   }
 
   closeModal() {
     this.showModal = false;
-    this.selectedPlace = null;
   }
+
 
   savePlace(formData: FormData) {
-    if (this.editMode) {
-      console.log('Editing place...', formData);
-      // TODO: API call for edit
+    if (this.editMode && this.selectedPlace?._id) {
+      this.placesService.updatePlace(this.selectedPlace._id, formData).subscribe({
+        next: () => {
+          this.getPlaces();
+          this.closeModal();
+        },
+        error: (err) => console.error('Error updating place:', err),
+      });
     } else {
-      console.log('Adding new place...', formData);
-      // TODO: API call for add
+      this.placesService.createPlace(formData).subscribe({
+        next: () => {
+          this.getPlaces();
+          this.closeModal();
+        },
+        error: (err) => console.error('Error creating place:', err),
+      });
     }
-    this.closeModal();
   }
-
+ViewPlace(placeId: string) {
+  this.placesService.getPlaceById(placeId).subscribe({
+   next:()=>{
+     this.selectedPlace = this.places.find(p => p._id === placeId) || null;
+     this.showModal = true;
+     console.log('Viewing place with ID:', this.selectedPlace);
+     
+   }
+  });
+}
+// showDetail(place:Place){
+//   this.selectedPlace = place
+// }
   deletePlace(id: string) {
-    console.log('Deleting place with id:', id);
-    // TODO: API call for delete
+    this.placesService.deletePlace(id).subscribe({
+      next: () => {
+        this.places = this.places.filter((p) => p._id !== id);
+      },
+      error: (err) => console.error('Error deleting place:', err),
+    });
   }
 }
