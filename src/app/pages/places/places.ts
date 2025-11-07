@@ -4,19 +4,21 @@ import { PlaceTable } from '../../components/place-table/place-table';
 import { PlaceModal } from '../../components/place-modal/place-modal';
 import { Place } from '../../models/place';
 import { PlacesService } from '../../services/places';
+import { PlaceCard } from '../../components/place-card/place-card';
 
 @Component({
   selector: 'app-places',
   standalone: true,
-  imports: [CommonModule, PlaceTable, PlaceModal],
+  imports: [CommonModule, PlaceTable, PlaceModal,PlaceCard],
   templateUrl: './places.html',
   styleUrl: './places.css',
 })
 export class Places implements OnInit {
   showModal = false;
+  showCard = false;
   editMode = false;
   selectedPlace: Place | null = null;
-   places: any[] = [];
+  places: any[] = [];
 
   constructor(private placesService: PlacesService) {}
 
@@ -24,17 +26,14 @@ export class Places implements OnInit {
     this.getPlaces();
   }
 
-getPlaces() {
-  this.placesService.getAllPlaces().subscribe({
-    next: (res: any) => {
-      console.log('Fetched places:', res);
-      this.places = res.data;  // خد الـ array من داخل الـ data
-    },
-    error: (err) => console.error('Error loading places:', err),
-  });
-}
-
-
+  getPlaces() {
+    this.placesService.getAllPlaces().subscribe({
+      next: (res: any) => {
+        this.places = res.data;
+      },
+      error: (err) => console.error('Error loading places:', err),
+    });
+  }
 
   openAddModal() {
     this.editMode = false;
@@ -52,6 +51,14 @@ getPlaces() {
     this.showModal = false;
   }
 
+  ViewPlace(placeId: string) {
+    this.selectedPlace = this.places.find((p) => p._id === placeId) || null;
+    this.showCard = true;
+  }
+
+  closeCard() {
+    this.showCard = false;
+  }
 
   savePlace(formData: FormData) {
     if (this.editMode && this.selectedPlace?._id) {
@@ -72,19 +79,7 @@ getPlaces() {
       });
     }
   }
-ViewPlace(placeId: string) {
-  this.placesService.getPlaceById(placeId).subscribe({
-   next:()=>{
-     this.selectedPlace = this.places.find(p => p._id === placeId) || null;
-     this.showModal = true;
-     console.log('Viewing place with ID:', this.selectedPlace);
-     
-   }
-  });
-}
-// showDetail(place:Place){
-//   this.selectedPlace = place
-// }
+
   deletePlace(id: string) {
     this.placesService.deletePlace(id).subscribe({
       next: () => {

@@ -1,4 +1,4 @@
-.hotel-card-overlay {
+.place-card-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
@@ -10,47 +10,36 @@
   padding: 2rem;
 }
 
-.hotel-card {
+.place-card {
   width: 90%;
-  max-width: 800px;
+  max-width: 900px;
   background: #fff;
   position: relative;
-}
-
-.images-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-start;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-
-
-.hotel-image {
-  width: 220px;           
-  height: 160px;            
-  object-fit: cover;        
-  cursor: pointer;
-  border-radius: 10px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.hotel-image:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border-radius: 1rem;
 }
 
 .images-container {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  justify-content: center; 
-  max-height: none;        
+  justify-content: center;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
 }
 
+.place-image {
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 10px;
+}
+
+.place-image:hover {
+  transform: scale(1.05);
+}
 
 .image-modal {
   position: fixed;

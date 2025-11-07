@@ -23,5 +23,12 @@
     (onSave)="savePlace($event)"
   ></app-place-modal>
 
+  <app-place-card
+  *ngIf="showCard"
+  [place]="selectedPlace"
+  (onClose)="closeCard()"
+></app-place-card>
+
+
  
 </div>

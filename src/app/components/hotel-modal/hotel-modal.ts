@@ -12,4 +12,15 @@ import { Hotel } from '../../models/hotel';
 export class HotelModal {
   @Input() hotel: Hotel | null = null;
   @Output() closeModal = new EventEmitter<void>();
+  selectedImage: string | null = null;
+
+  openImage(imageUrl?: string) {
+    if (imageUrl) {
+      this.selectedImage = imageUrl;
+    }
+  }
+
+  closeImageModal() {
+    this.selectedImage = null;
+  }
 }
