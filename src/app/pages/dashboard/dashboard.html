@@ -1,9 +1,9 @@
-<div class="container-fluid">
-  <h4 class="fw-bold mb-4">Dashboard Overview</h4>
+<div class="container-fluid mt-4">
+  <h4 class="fw-bold mb-4 text-primary">Dashboard Overview</h4>
 
   <div class="row g-3">
     @for (stat of stats; track stat.title) {
-      <div class="col-12 col-sm-6 col-md-3">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <app-stat-card
           [title]="stat.title"
           [count]="stat.count"
