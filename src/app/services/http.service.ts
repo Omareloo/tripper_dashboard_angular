@@ -9,7 +9,7 @@ export class HttpService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGY5NmQ4NTlmZTZmM2Y5OWM5OTU5ZTUiLCJhY3RpdmVSb2xlIjoiYWRtaW4iLCJlbWFpbCI6ImhhemVtaGVmbnlAZ21haWwuY29tIiwiaWF0IjoxNzYyNTIyNDk2fQ.5Iga1LBIIqnVwJdNjjs_zYAXTITQv6x5hJFQxFOSDCU';
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGY5NmQ4NTlmZTZmM2Y5OWM5OTU5ZTUiLCJhY3RpdmVSb2xlIjoiYWRtaW4iLCJlbWFpbCI6ImhhemVtaGVmbnlAZ21haWwuY29tIiwiaWF0IjoxNzYyNjQxODg0fQ.v-6ABsoF-DnJ_S8K483qZ8BZjsnIzD8gzShKhsg-sLA';
     return new HttpHeaders({
       token: `${token}`,
     });

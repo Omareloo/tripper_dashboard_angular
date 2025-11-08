@@ -60,25 +60,43 @@ export class Places implements OnInit {
     this.showCard = false;
   }
 
-  savePlace(formData: FormData) {
-    if (this.editMode && this.selectedPlace?._id) {
-      this.placesService.updatePlace(this.selectedPlace._id, formData).subscribe({
-        next: () => {
-          this.getPlaces();
-          this.closeModal();
-        },
-        error: (err) => console.error('Error updating place:', err),
-      });
-    } else {
-      this.placesService.createPlace(formData).subscribe({
-        next: () => {
-          this.getPlaces();
-          this.closeModal();
-        },
-        error: (err) => console.error('Error creating place:', err),
-      });
-    }
+  // 🟢 الحفظ (إضافة أو تعديل)
+savePlace(formData: FormData) {
+  // debug logs
+  console.log('Places.savePlace: editMode=', this.editMode, 'selectedPlace=', this.selectedPlace);
+  // حاول نقرأ id من الـ FormData (لو ضفناه)
+  const idFromForm = (formData as any).get ? (formData as any).get('id') : null;
+  console.log('Places.savePlace: idFromForm=', idFromForm);
+
+  const placeId = this.editMode && this.selectedPlace?._id ? this.selectedPlace._id : (idFromForm as string | null);
+
+  if (placeId) {
+    // Update
+    this.placesService.updatePlace(placeId, formData).subscribe({
+      next: () => {
+        console.log('✅ Place updated successfully');
+        this.getPlaces();
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error updating place:', err);
+      },
+    });
+  } else {
+    // Create
+    this.placesService.createPlace(formData).subscribe({
+      next: () => {
+        console.log('✅ Place created successfully');
+        this.getPlaces();
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error creating place:', err);
+      },
+    });
   }
+}
+
 
   deletePlace(id: string) {
     this.placesService.deletePlace(id).subscribe({
@@ -89,3 +107,4 @@ export class Places implements OnInit {
     });
   }
 }
+
