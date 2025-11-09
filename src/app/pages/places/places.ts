@@ -29,7 +29,8 @@ export class Places implements OnInit {
   getPlaces() {
     this.placesService.getAllPlaces().subscribe({
       next: (res: any) => {
-        this.places = res.data;
+        // Backend responses vary across endpoints. Accept both raw array or wrapper { data: [...] }.
+        this.places = Array.isArray(res) ? res : res?.data ?? [];
       },
       error: (err) => console.error('Error loading places:', err),
     });
@@ -61,30 +62,37 @@ export class Places implements OnInit {
   }
 
   // 🟢 الحفظ (إضافة أو تعديل)
-savePlace(formData: FormData) {
-  // debug logs
-  console.log('Places.savePlace: editMode=', this.editMode, 'selectedPlace=', this.selectedPlace);
-  // حاول نقرأ id من الـ FormData (لو ضفناه)
-  const idFromForm = (formData as any).get ? (formData as any).get('id') : null;
-  console.log('Places.savePlace: idFromForm=', idFromForm);
+savePlace(payload: any) {
+  console.log('savePlace called. editMode=', this.editMode, 'payload:', payload);
 
-  const placeId = this.editMode && this.selectedPlace?._id ? this.selectedPlace._id : (idFromForm as string | null);
+  // Helper to call update (payload can be FormData or JSON)
+  const doUpdate = (id: string, body: any) =>
+    this.placesService.updatePlace(id, body).subscribe({
+      next: (res) => {
+        const updatedPlace = res?.data ?? res;
+        console.log('✅ Place updated successfully (raw response):', res);
 
-  if (placeId) {
-    // Update
-    this.placesService.updatePlace(placeId, formData).subscribe({
-      next: () => {
-        console.log('✅ Place updated successfully');
-        this.getPlaces();
+        if (updatedPlace && updatedPlace._id) {
+          const index = this.places.findIndex((p) => p._id === updatedPlace._id);
+          if (index !== -1) {
+            this.places[index] = updatedPlace;
+          } else {
+            console.warn('Updated place id not found in local list, refetching places');
+            this.getPlaces();
+          }
+        } else {
+          console.warn('Update response did not include updated place, refetching places');
+          this.getPlaces();
+        }
+
         this.closeModal();
       },
-      error: (err) => {
-        console.error('Error updating place:', err);
-      },
+      error: (err) => console.error('Error updating place:', err),
     });
-  } else {
-    // Create
-    this.placesService.createPlace(formData).subscribe({
+
+  // Create helper
+  const doCreate = (body: any) =>
+    this.placesService.createPlace(body).subscribe({
       next: () => {
         console.log('✅ Place created successfully');
         this.getPlaces();
@@ -94,6 +102,11 @@ savePlace(formData: FormData) {
         console.error('Error creating place:', err);
       },
     });
+
+  if (this.editMode && this.selectedPlace?._id) {
+    doUpdate(this.selectedPlace._id, payload);
+  } else {
+    doCreate(payload);
   }
 }
 
