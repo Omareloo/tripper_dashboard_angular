@@ -10,11 +10,11 @@ export class ExperienceService {
   constructor(private http: HttpService) {}
 
   getAllExperiences(): Observable<Experience[]> {
-    return this.http.get<Experience[]>('experience');
+    return this.http.get<Experience[]>('experiance');
   }
 
   getExperienceById(id: string): Observable<Experience> {
-    return this.http.get<Experience>(`experience/${id}`);
+    return this.http.get<Experience>(`experiance/${id}`);
   }
 
   // createExperience(data: Experience): Observable<Experience> {
@@ -26,6 +26,6 @@ export class ExperienceService {
   // }
 
   deleteExperience(id: string): Observable<any> {
-    return this.http.delete<any>(`experience/${id}`);
+    return this.http.delete<any>(`experiance/${id}`);
   }
 }
