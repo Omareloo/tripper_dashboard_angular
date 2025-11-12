@@ -27,7 +27,7 @@ export class DashboardService {
   }
 
   getAllExperiences(): Observable<Experience[]> {
-    return this.http.get<Experience[]>('experience');
+    return this.http.get<Experience[]>('experiance');
   } 
 
   getAllReservations(): Observable<Reservation[]> {
