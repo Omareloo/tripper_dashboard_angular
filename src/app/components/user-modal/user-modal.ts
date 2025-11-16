@@ -14,4 +14,7 @@ export class UserModal {
   @Output() closeModal = new EventEmitter<void>();
   @Output() verifyUser = new EventEmitter<User>();
   @Output() rejectUser = new EventEmitter<User>();
+  @Input() hotels: any[] = [];
+  @Input() experiences: any[] = [];
+
 }

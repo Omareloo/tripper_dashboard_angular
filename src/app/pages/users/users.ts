@@ -17,6 +17,9 @@ export class Users implements OnInit {
   filteredUsers: User[] = [];
   selectedUser: User | null = null;
 
+  hostHotels: any[] = [];
+  hostExperiences: any[] = [];
+
   constructor(private userService: UserService) {}
 
   ngOnInit() {
@@ -30,19 +33,28 @@ export class Users implements OnInit {
     });
   }
 
- filterByStatus(status: string) {
-  if (!status) {
-    this.filteredUsers = this.users;
-  } else {
-    this.filteredUsers = this.users.filter(
-      (u) => u.isVerified?.toLowerCase() === status.toLowerCase()
-    );
+  filterByStatus(status: string) {
+    if (!status) {
+      this.filteredUsers = this.users;
+    } else {
+      this.filteredUsers = this.users.filter(
+        (u) => u.isVerified?.toLowerCase() === status.toLowerCase()
+      );
+    }
   }
-}
-
 
   openUserModal(user: User) {
     this.selectedUser = user;
+
+    if (user.role.includes('host')) {
+      this.userService.getHotelsByHost(user._id).subscribe((res) => {
+        this.hostHotels = res;
+      });
+
+      this.userService.getExperiencesByHost(user._id).subscribe((res) => {
+        this.hostExperiences = res;
+      });
+    }
   }
 
   closeUserModal() {
@@ -55,11 +67,12 @@ export class Users implements OnInit {
       this.closeUserModal();
     });
   }
-rejectUser(user: User) {
-  this.userService.verifyUser(user._id, 'rejected').subscribe(() => {
-    this.loadUsers();
-    this.closeUserModal();
-  });
+
+  rejectUser(user: User) {
+    this.userService.verifyUser(user._id, 'rejected').subscribe(() => {
+      this.loadUsers();
+      this.closeUserModal();
+    });
+  }
 }
 
-}

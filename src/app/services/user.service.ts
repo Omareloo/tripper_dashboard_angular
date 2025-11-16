@@ -16,4 +16,13 @@ export class UserService {
   return this.http.patch<any>(`user/verify/${userId}`, { status });
 }
 
+getHotelsByHost(hostId: string) {
+  return this.http.get<any[]>(`hotel/by-host/${hostId}`);
+}
+
+getExperiencesByHost(hostId: string) {
+  return this.http.get<any[]>(`experiance/by-host/${hostId}`);
+}
+
+
 }

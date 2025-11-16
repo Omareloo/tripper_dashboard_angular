@@ -20,11 +20,14 @@
   ></app-user-table>
 
   @if (selectedUser) {
-    <app-user-modal
-      [user]="selectedUser"
-      (closeModal)="closeUserModal()"
-      (verifyUser)="verifyUser($event)"
-      (rejectUser)="rejectUser($event)"
-    ></app-user-modal>
+  <app-user-modal
+  [user]="selectedUser"
+  [hotels]="hostHotels"
+  [experiences]="hostExperiences"
+  (closeModal)="closeUserModal()"
+  (verifyUser)="verifyUser($event)"
+  (rejectUser)="rejectUser($event)"
+></app-user-modal>
+
   }
 </div>
