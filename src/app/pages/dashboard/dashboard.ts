@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from './../../services/dashboard';
 import { Card } from '../../components/card/card';
@@ -15,31 +15,51 @@ import { Place } from '../../models/place';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   hotels: Hotel[] = [];
   users: User[] = [];
   experience: Experience[] = [];
   reservation: Reservation[] = [];
   place: Place[] = [];
+  stats: any[] = [];
 
-  stats: any[] = []; // دي اللي هتتعرض في الكروت
+  analyticsData: any = null;
+  isLoading = true;
+  
+  reservationChartData: any[] = [];
+  monthlyUsersChartData: any[] = [];
+  topHotelsData: any[] = [];
+
+  totalRevenue = 0;
+  averageRating = 0;
 
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
-    this.loadAllData();
+    this.loadDashboardData();
   }
 
-  loadAllData() {
-    // نستخدم forkJoin لو حبيتهم في future، بس دلوقتي نعملها بسيط async calls
-    this.loadHotels();
-    this.loadUsers();
-    this.getExperiences();
-    this.loadReservations();
-    this.getPlaces();
+  loadDashboardData() {
+    this.isLoading = true;
+    
+    this.dashboardService.getAnalyticsData().subscribe({
+      next: (data) => {
+        this.analyticsData = data;
+        this.prepareChartData(data);
+        this.totalRevenue = data.totalRevenue;
+        this.averageRating = data.averageRating;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading analytics:', err);
+        this.isLoading = false;
+      },
+    });
+
+    this.loadBasicData();
   }
 
-  loadHotels() {
+  loadBasicData() {
     this.dashboardService.getAllHotels().subscribe({
       next: (data) => {
         this.hotels = data;
@@ -47,9 +67,7 @@ export class Dashboard {
       },
       error: (err) => console.error('Error loading hotels:', err),
     });
-  }
 
-  loadUsers() {
     this.dashboardService.getAllUsers().subscribe({
       next: (res) => {
         this.users = res;
@@ -57,9 +75,7 @@ export class Dashboard {
       },
       error: (err) => console.error('Error loading users:', err),
     });
-  }
 
-  getExperiences() {
     this.dashboardService.getAllExperiences().subscribe({
       next: (data) => {
         this.experience = data;
@@ -67,9 +83,7 @@ export class Dashboard {
       },
       error: (err) => console.error('Error loading experiences:', err),
     });
-  }
 
-  loadReservations() {
     this.dashboardService.getAllReservations().subscribe({
       next: (data) => {
         this.reservation = data;
@@ -77,9 +91,7 @@ export class Dashboard {
       },
       error: (err) => console.error('Error fetching reservations:', err),
     });
-  }
 
-  getPlaces() {
     this.dashboardService.getAllPlaces().subscribe({
       next: (res: any) => {
         this.place = res.data;
@@ -87,6 +99,19 @@ export class Dashboard {
       },
       error: (err) => console.error('Error loading places:', err),
     });
+  }
+
+  prepareChartData(data: any) {
+    this.reservationChartData = [
+      { name: 'Pending', value: data.reservationStats.pending, color: '#fbbf24' },
+      { name: 'Confirmed', value: data.reservationStats.confirmed, color: '#10b981' },
+      { name: 'Cancelled', value: data.reservationStats.cancelled, color: '#ef4444' },
+      { name: 'Completed', value: data.reservationStats.completed, color: '#3b82f6' },
+    ];
+
+    this.monthlyUsersChartData = data.monthlyUsers;
+
+    this.topHotelsData = data.topHotels;
   }
 
   updateStats() {
@@ -122,5 +147,42 @@ export class Dashboard {
         color: 'info',
       },
     ];
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(value);
+  }
+
+  formatRating(rating: number): string {
+    return rating.toFixed(1);
+  }
+
+  calculateStrokeDasharray(value: number, index: number): string {
+    const total = this.reservationChartData.reduce((sum, item) => sum + item.value, 0);
+    if (total === 0) return '0 100';
+    
+    const percentage = (value / total) * 100;
+    const circumference = 2 * Math.PI * 25; 
+    const segmentLength = (percentage / 100) * circumference;
+    
+    return `${segmentLength} ${circumference}`;
+  }
+
+  calculateStrokeDashoffset(index: number): number {
+    const total = this.reservationChartData.reduce((sum, item) => sum + item.value, 0);
+    if (total === 0) return 0;
+    
+    const circumference = 2 * Math.PI * 25;
+    let offset = 0;
+    
+    for (let i = 0; i < index; i++) {
+      const percentage = (this.reservationChartData[i].value / total) * 100;
+      offset += (percentage / 100) * circumference;
+    }
+    
+    return -offset;
   }
 }
