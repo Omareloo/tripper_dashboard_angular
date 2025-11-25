@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -7,7 +9,10 @@ import { Component } from '@angular/core';
   styleUrl: './topbar.css',
 })
 export class Topbar {
+  constructor(private auth: AuthService, private router: Router) {}
+
   logout() {
-    console.log('Logout clicked');
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

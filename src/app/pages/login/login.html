@@ -1,0 +1,45 @@
+<div class="login-wrapper d-flex justify-content-center align-items-center">
+  <div class="login-box p-4 shadow rounded bg-white">
+
+    <h3 class="text-center mb-3 text-primary fw-bold">Admin Login</h3>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      
+      <div class="mb-3">
+        <label>Email</label>
+        <input formControlName="email" class="form-control" type="email" />
+
+        <div class="text-danger mt-1" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('required')">
+          Email is required
+        </div>
+
+        <div class="text-danger mt-1" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+          Invalid email format
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Password</label>
+        <input formControlName="password" class="form-control" type="password" />
+
+        <div class="text-danger mt-1" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('required')">
+          Password is required
+        </div>
+
+        <div class="text-danger mt-1" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+          Minimum 6 characters required
+        </div>
+      </div>
+
+      <div *ngIf="errorMsg" class="alert alert-danger py-2">
+        {{ errorMsg }}
+      </div>
+
+      <button class="btn btn-primary w-100" [disabled]="loading || form.invalid">
+        <span *ngIf="!loading">Login</span>
+        <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+      </button>
+    </form>
+
+  </div>
+</div>
