@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
+import { ToastService } from '../../services/toast.service';
 import { User } from '../../models/user';
 import { UserTable } from '../../components/user-table/user-table';
 import { UserModal } from '../../components/user-modal/user-modal';
@@ -20,16 +21,25 @@ export class Users implements OnInit {
   hostHotels: any[] = [];
   hostExperiences: any[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private toast: ToastService
+  ) {}
 
   ngOnInit() {
     this.loadUsers();
   }
 
   loadUsers() {
-    this.userService.getAllUsers().subscribe((res) => {
-      this.users = res;
-      this.filteredUsers = res;
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        this.users = res;
+        this.filteredUsers = res;
+      },
+      error: (err) => {
+        console.error('Error loading users:', err);
+        this.toast.error('Failed to load users. Please try again.');
+      }
     });
   }
 
@@ -45,34 +55,63 @@ export class Users implements OnInit {
 
   openUserModal(user: User) {
     this.selectedUser = user;
+    this.hostHotels = [];
+    this.hostExperiences = [];
 
     if (user.role.includes('host')) {
-      this.userService.getHotelsByHost(user._id).subscribe((res) => {
-        this.hostHotels = res;
+      this.userService.getHotelsByHost(user._id).subscribe({
+        next: (res) => {
+          this.hostHotels = res;
+        },
+        error: (err) => {
+          console.error('Error loading hotels:', err);
+          this.toast.warning('Could not load hotels for this host');
+        }
       });
 
-      this.userService.getExperiencesByHost(user._id).subscribe((res) => {
-        this.hostExperiences = res;
+      this.userService.getExperiencesByHost(user._id).subscribe({
+        next: (res) => {
+          this.hostExperiences = res;
+        },
+        error: (err) => {
+          console.error('Error loading experiences:', err);
+          this.toast.warning('Could not load experiences for this host');
+        }
       });
     }
   }
 
   closeUserModal() {
     this.selectedUser = null;
+    this.hostHotels = [];
+    this.hostExperiences = [];
   }
 
-  verifyUser(user: User) {
-    this.userService.verifyUser(user._id, 'verified').subscribe(() => {
-      this.loadUsers();
-      this.closeUserModal();
+  onVerifyUser(event: {user: User, reason: string}) {
+    this.userService.verifyUser(event.user._id, 'verified', event.reason).subscribe({
+      next: (response) => {
+        this.toast.success(`${event.user.name} has been verified successfully! Email sent.`);
+        this.loadUsers();
+        this.closeUserModal();
+      },
+      error: (err) => {
+        console.error('Error verifying user:', err);
+        this.toast.error('Failed to verify user. Please try again.');
+      }
     });
   }
 
-  rejectUser(user: User) {
-    this.userService.verifyUser(user._id, 'rejected').subscribe(() => {
-      this.loadUsers();
-      this.closeUserModal();
+  onRejectUser(event: {user: User, reason: string}) {
+    this.userService.verifyUser(event.user._id, 'rejected', event.reason).subscribe({
+      next: (response) => {
+        this.toast.success(`${event.user.name} has been rejected. Email sent.`);
+        this.loadUsers();
+        this.closeUserModal();
+      },
+      error: (err) => {
+        console.error('Error rejecting user:', err);
+        this.toast.error('Failed to reject user. Please try again.');
+      }
     });
   }
 }
-

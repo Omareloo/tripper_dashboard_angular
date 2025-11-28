@@ -71,12 +71,40 @@
             </li>
           </ul>
         </div>
+
+        <!-- Reason Input Section -->
+        <div *ngIf="showReasonInput" class="mt-4 p-3 border rounded bg-light">
+          <h6 class="mb-3">
+            <span *ngIf="actionType === 'verify'" class="text-success">✓ Verify User</span>
+            <span *ngIf="actionType === 'reject'" class="text-danger">✗ Reject User</span>
+          </h6>
+          <div class="mb-3">
+            <label class="form-label">
+              <span *ngIf="actionType === 'verify'">Reason for approval:</span>
+              <span *ngIf="actionType === 'reject'">Reason for rejection:</span>
+            </label>
+            <textarea 
+              class="form-control" 
+              [ngClass]="{'is-invalid': errorMessage}"
+              rows="4" 
+              [(ngModel)]="reason" 
+              placeholder="Enter your reason here... (minimum 10 characters)"
+            ></textarea>
+            <div *ngIf="errorMessage" class="invalid-feedback d-block">
+              {{ errorMessage }}
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="confirmAction()">Confirm</button>
+            <button class="btn btn-secondary" (click)="cancelAction()">Cancel</button>
+          </div>
+        </div>
       </div>
 
       <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button class="btn btn-success" (click)="verifyUser.emit(user)">Verify</button>
-        <button class="btn btn-danger" (click)="rejectUser.emit(user)">Reject</button>
+      <div class="modal-footer" *ngIf="!showReasonInput">
+        <button class="btn btn-success" (click)="onVerifyClick()">Verify</button>
+        <button class="btn btn-danger" (click)="onRejectClick()">Reject</button>
         <button class="btn btn-secondary" (click)="closeModal.emit()">Close</button>
       </div>
     </div>

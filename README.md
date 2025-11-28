@@ -1,59 +1,59 @@
+
 # Tripper
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
+This is an Angular (CLI) application scaffolded with Angular CLI v20.x.
 
-## Development server
+## Quick Start
 
-To start a local development server, run:
+- **Install deps:** `npm install`
+- **Run dev server:** `npm start` or `ng serve`
+- **Open in browser:** `http://localhost:4200/`
 
-```bash
-ng serve
-```
+## Folder structure
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Top-level files and folders (short):
 
-## Code scaffolding
+- `angular.json` : Angular CLI workspace configuration.
+- `package.json` : npm scripts and dependencies.
+- `tsconfig*.json` : TypeScript compiler configuration files.
+- `public/` : Public/static assets copied to the build output.
+- `src/` : Source files for the application (see detailed tree below).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Detailed `src/` layout:
 
-```bash
-ng generate component component-name
-```
+`src/`
+- `index.html` — App shell HTML.
+- `main.ts` — App bootstrap (Angular entrypoint).
+- `styles.css` — Global styles.
+- `app/` — Main application sources:
+	- `app.ts`, `app.routes.ts`, `app.config.ts`, `app.html`, `app.css` — app-level wiring and layout.
+	- `components/` — Reusable UI pieces (each component in its own folder). Examples:
+		- `card/` — small UI card component (`card.ts`, `card.html`, `card.css`).
+		- `place-*`, `hotel-*`, `experience-*`, `reservation-*`, `user-*` components — modals and tables for CRUD-style UI.
+		- `sidebar/`, `topbar/` — layout components.
+	- `pages/` — Feature pages (each page has its own folder):
+		- `dashboard/`, `places/`, `hotels/`, `experiences/`, `reservations/`, `users/`, `login/`.
+	- `services/` — Application services that encapsulate API and business logic:
+		- `auth.service.ts`, `http.service.ts`, `user.service.ts`, `hotel.service.ts`, `reservation.service.ts`, `experiences.ts`, `places.ts`, `dashboard.ts`.
+	- `models/` — TypeScript interfaces / models: `user.ts`, `place.ts`, `hotel.ts`, `experience.ts`, `reservation.ts`.
+	- `guards/` — Route guards (e.g., `auth-guard.ts`) used to protect routes.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## What's what (brief)
 
-```bash
-ng generate --help
-```
+- Components: Small, focused UI units (presentation + minimal logic). Found under `src/app/components/`.
+- Pages: Route-backed views that assemble components and services. Found under `src/app/pages/`.
+- Services: Handle HTTP calls, auth, and shared state. Found under `src/app/services/`.
+- Models: Data shape contracts used across services and components.
+- Guards: Protect routes based on auth or permissions.
 
-## Building
+## Common tasks
 
-To build the project run:
+- Start dev server: `npm start` or `ng serve`
+- Run tests: `npm test` or `ng test`
+- Build production: `ng build --configuration production`
 
-```bash
-ng build
-```
+## Notes
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- This README focuses on the repository layout. See inline docs and comments in `src/app/` for component/service specifics.
+- If you want, I can expand this README with a developer setup section, API examples, or contribution guidelines.
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
