@@ -10,9 +10,9 @@ import { NgClass } from '@angular/common';
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
-  active = '/';
+  active = '/dashboard';
   links = [
-    { path: '/', label: 'Dashboard', icon: 'bi-speedometer2' },
+    { path: '/dashboard', label: 'Dashboard', icon: 'bi-speedometer2' },
     { path: '/users', label: 'Users', icon: 'bi-people' },
     { path: '/places', label: 'Places', icon: 'bi-geo-alt' },
     { path: '/hotels', label: 'Hotels', icon: 'bi-building' },

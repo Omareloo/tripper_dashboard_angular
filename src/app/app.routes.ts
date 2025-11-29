@@ -7,16 +7,25 @@ import { Reservations } from './pages/reservations/reservations';
 import { ExperienceComponent } from './pages/experiences/experiences';
 import { LoginComponent } from './pages/login/login';
 import { AuthGuard } from './guards/auth-guard';
+import { LayoutComponent } from './pages/layout/layout';
 
 export const routes: Routes = [
+  { path: '', component: LoginComponent },
   { path: 'login', component: LoginComponent },
 
-  { path: '', component: Dashboard, canActivate: [AuthGuard] },
-  { path: 'users', component: Users, canActivate: [AuthGuard] },
-  { path: 'places', component: Places, canActivate: [AuthGuard] },
-  { path: 'hotels', component: Hotels, canActivate: [AuthGuard] },
-  { path: 'reservations', component: Reservations, canActivate: [AuthGuard] },
-  { path: 'experiences', component: ExperienceComponent, canActivate: [AuthGuard] },
+  {
+    path: '',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: Dashboard },
+      { path: 'users', component: Users },
+      { path: 'places', component: Places },
+      { path: 'hotels', component: Hotels },
+      { path: 'reservations', component: Reservations },
+      { path: 'experiences', component: ExperienceComponent },
+    ],
+  },
 
   { path: '**', redirectTo: '' },
 ];
