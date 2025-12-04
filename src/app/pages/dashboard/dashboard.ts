@@ -184,5 +184,5 @@ export class Dashboard implements OnInit {
     }
     
     return -offset;
-  }
+  } 
 }

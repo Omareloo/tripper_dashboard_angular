@@ -1,39 +1,88 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlaceTable } from '../../components/place-table/place-table';
+import { FormsModule } from '@angular/forms';
 import { PlaceModal } from '../../components/place-modal/place-modal';
 import { Place } from '../../models/place';
 import { PlacesService } from '../../services/places';
-import { PlaceCard } from '../../components/place-card/place-card';
 
 @Component({
   selector: 'app-places',
   standalone: true,
-  imports: [CommonModule, PlaceTable, PlaceModal,PlaceCard],
+  imports: [CommonModule, PlaceModal, FormsModule],
   templateUrl: './places.html',
   styleUrl: './places.css',
 })
 export class Places implements OnInit {
-  showModal = false;
-  showCard = false;
-  editMode = false;
+  places: Place[] = [];
+  filteredPlaces: Place[] = [];
   selectedPlace: Place | null = null;
-  places: any[] = [];
+  
+  loading = false;
+  showModal = false;
+  editMode = false;
+  searchTerm = '';
+  filterCity = '';
+  cities: string[] = [];
+
+  // Stats
+  stats = {
+    total: 0,
+    countries: 0,
+    cities: 0,
+    averageRating: 0
+  };
 
   constructor(private placesService: PlacesService) {}
 
   ngOnInit(): void {
-    this.getPlaces();
+    this.loadPlaces();
   }
 
-  getPlaces() {
+  loadPlaces() {
+    this.loading = true;
     this.placesService.getAllPlaces().subscribe({
       next: (res: any) => {
-        // Backend responses vary across endpoints. Accept both raw array or wrapper { data: [...] }.
         this.places = Array.isArray(res) ? res : res?.data ?? [];
+        this.filteredPlaces = this.places;
+this.cities = [...new Set(
+  this.places
+    .map(p => p.address?.city)
+    .filter((city): city is string => Boolean(city))
+)];        this.calculateStats();
+        this.loading = false;
       },
-      error: (err) => console.error('Error loading places:', err),
+      error: (err) => {
+        console.error('Error loading places:', err);
+        this.loading = false;
+      },
     });
+  }
+
+  calculateStats() {
+    this.stats.total = this.places.length;
+    this.stats.countries = new Set(this.places.map(p => p.address?.country).filter(Boolean)).size;
+    this.stats.cities = new Set(this.places.map(p => p.address?.city).filter(Boolean)).size;
+    
+    const ratings = this.places.map(p => p.starRating || 0).filter(r => r > 0);
+    this.stats.averageRating = ratings.length > 0 
+      ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length 
+      : 0;
+  }
+
+  applyFilters() {
+    this.filteredPlaces = this.places.filter(place => {
+      const matchesSearch = place.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesCity = !this.filterCity || place.address?.city === this.filterCity;
+      return matchesSearch && matchesCity;
+    });
+  }
+
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  onCityChange() {
+    this.applyFilters();
   }
 
   openAddModal() {
@@ -50,74 +99,64 @@ export class Places implements OnInit {
 
   closeModal() {
     this.showModal = false;
+    this.selectedPlace = null;
   }
 
-  ViewPlace(placeId: string) {
-    this.selectedPlace = this.places.find((p) => p._id === placeId) || null;
-    this.showCard = true;
-  }
-
-  closeCard() {
-    this.showCard = false;
-  }
-
-  // 🟢 الحفظ (إضافة أو تعديل)
-savePlace(payload: any) {
-  console.log('savePlace called. editMode=', this.editMode, 'payload:', payload);
-
-  // Helper to call update (payload can be FormData or JSON)
-  const doUpdate = (id: string, body: any) =>
-    this.placesService.updatePlace(id, body).subscribe({
-      next: (res) => {
-        const updatedPlace = res?.data ?? res;
-        console.log('✅ Place updated successfully (raw response):', res);
-
-        if (updatedPlace && updatedPlace._id) {
-          const index = this.places.findIndex((p) => p._id === updatedPlace._id);
-          if (index !== -1) {
-            this.places[index] = updatedPlace;
+  savePlace(payload: any) {
+    const doUpdate = (id: string, body: any) =>
+      this.placesService.updatePlace(id, body).subscribe({
+        next: (res) => {
+          const updatedPlace = res?.data ?? res;
+          if (updatedPlace && updatedPlace._id) {
+            const index = this.places.findIndex((p) => p._id === updatedPlace._id);
+            if (index !== -1) {
+              this.places[index] = updatedPlace;
+            } else {
+              this.loadPlaces();
+            }
           } else {
-            console.warn('Updated place id not found in local list, refetching places');
-            this.getPlaces();
+            this.loadPlaces();
           }
-        } else {
-          console.warn('Update response did not include updated place, refetching places');
-          this.getPlaces();
-        }
+          this.closeModal();
+        },
+        error: (err) => console.error('Error updating place:', err),
+      });
 
-        this.closeModal();
-      },
-      error: (err) => console.error('Error updating place:', err),
-    });
+    const doCreate = (body: any) =>
+      this.placesService.createPlace(body).subscribe({
+        next: () => {
+          this.loadPlaces();
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error('Error creating place:', err);
+        },
+      });
 
-  // Create helper
-  const doCreate = (body: any) =>
-    this.placesService.createPlace(body).subscribe({
-      next: () => {
-        console.log('✅ Place created successfully');
-        this.getPlaces();
-        this.closeModal();
-      },
-      error: (err) => {
-        console.error('Error creating place:', err);
-      },
-    });
-
-  if (this.editMode && this.selectedPlace?._id) {
-    doUpdate(this.selectedPlace._id, payload);
-  } else {
-    doCreate(payload);
+    if (this.editMode && this.selectedPlace?._id) {
+      doUpdate(this.selectedPlace._id, payload);
+    } else {
+      doCreate(payload);
+    }
   }
-}
 
+  deletePlace(place: Place) {
+    if (!place._id) {
+      console.error('Place id is missing!');
+      return;
+    }
 
-  deletePlace(id: string) {
-    this.placesService.deletePlace(id).subscribe({
-      next: () => {
-        this.places = this.places.filter((p) => p._id !== id);
-      },
-      error: (err) => console.error('Error deleting place:', err),
-    });
+    if (confirm(`Are you sure you want to delete "${place.name}"?`)) {
+      this.placesService.deletePlace(place._id).subscribe({
+        next: () => {
+          this.loadPlaces();
+        },
+        error: (err) => console.error('Error deleting place:', err),
+      });
+    }
   }
-}
 
+trackById(index: number, place: Place): string {
+  return place._id ?? index.toString();
+}
+}
