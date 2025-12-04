@@ -1,7 +1,15 @@
+// reservation.service.ts
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { HttpService } from './http.service';
 import { Reservation } from '../models/reservation';
+
+export interface ReservationStats {
+  totalReservations: number;
+  statusCounts: { _id: string; count: number }[];
+  totalRevenue: string;
+  averagePrice: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ReservationService {
@@ -26,6 +34,9 @@ export class ReservationService {
     );
   }
 
+  getReservationStats(): Observable<ReservationStats> {
+    return this.http.get<ReservationStats>('api/reservations/admin/stats');
+  }
 
   private formatDate(dateStr: string): string {
     if (!dateStr) return '-';

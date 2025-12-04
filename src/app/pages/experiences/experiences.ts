@@ -1,57 +1,108 @@
 import { Component, OnInit } from '@angular/core';
 import { Experience } from '../../models/experience';
-import { ExperienceService } from '../../services/experiences';
+import { ExperienceService, ExperienceStats } from '../../services/experiences';
 import { CommonModule } from '@angular/common';
 import { ExperienceModal } from '../../components/experience-modal/experience-modal';
-import { ExperienceTable } from '../../components/experience-table/experience-table';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
-  imports: [CommonModule,ExperienceModal,ExperienceTable],
+  imports: [CommonModule, ExperienceModal, FormsModule],
   templateUrl: './experiences.html',
   styleUrl: './experiences.css'
 })
 export class ExperienceComponent implements OnInit {
   experiences: Experience[] = [];
+  filteredExperiences: Experience[] = [];
   selectedExperience: Experience | null = null;
+  stats: ExperienceStats | null = null;
   loading = false;
+  showStats = true;
+  searchTerm = '';
+  filterCity = '';
+  cities: string[] = [];
 
   constructor(private experienceService: ExperienceService) {}
 
   ngOnInit(): void {
-  let  data =  this.getExperiences();
-  // console.log(data);
+    this.getExperiences();
+    this.getStats();
   }
 
   getExperiences() {
+    this.loading = true;
     this.experienceService.getAllExperiences().subscribe({
-      next: (data) => (this.experiences = data),
-      error: (err) => console.error('Error loading experiences:', err),
+      next: (data) => {
+        this.experiences = data;
+        this.filteredExperiences = data;
+        this.cities = [...new Set(data.map(exp => exp.address.city))];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading experiences:', err);
+        this.loading = false;
+      },
     });
   }
+
+  getStats() {
+    this.experienceService.getExperienceStats().subscribe({
+      next: (data) => {
+        this.stats = data;
+      },
+      error: (err) => console.error('Error loading stats:', err),
+    });
+  }
+
+  applyFilters() {
+    this.filteredExperiences = this.experiences.filter(exp => {
+      const matchesSearch = exp.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesCity = !this.filterCity || exp.address.city === this.filterCity;
+      return matchesSearch && matchesCity;
+    });
+  }
+
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  onCityChange() {
+    this.applyFilters();
+  }
+
+  toggleStats() {
+    this.showStats = !this.showStats;
+  }
+
   openExperienceDetails(exp: Experience) {
     this.selectedExperience = exp;
   }
 
-closeExperienceDetails() {
-  this.selectedExperience = null;
-}
-
-deleteExperience(experience: any) {
-if (!experience?._id) {
-    console.error('Experience id is missing!', experience);
-    return;
+  closeExperienceDetails() {
+    this.selectedExperience = null;
   }
 
-  this.experienceService.deleteExperience(experience._id).subscribe({
-    next: () => {
-      console.log('Deleted successfully');
-      this.getExperiences();
-    },
-    error: (err) => console.error('Error deleting experience: ', err)
-  });
-  
-}
+  deleteExperience(experience: any) {
+    if (!experience?._id) {
+      console.error('Experience id is missing!', experience);
+      return;
+    }
 
+    if (confirm('Are you sure you want to delete this experience?')) {
+      this.experienceService.deleteExperience(experience._id).subscribe({
+        next: () => {
+          console.log('Deleted successfully');
+          this.getExperiences();
+          this.getStats();
+        },
+        error: (err) => console.error('Error deleting experience: ', err)
+      });
+    }
+  }
+
+  // ✅ إضافة الـ trackBy function
+  trackById(index: number, experience: Experience): string {
+    return experience._id || experience.id;
+  }
 }
