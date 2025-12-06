@@ -175,7 +175,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let reservation of filteredReservations; trackBy: trackById">
+            <tr *ngFor="let reservation of pagedFilteredReservations; trackBy: trackById">
               <td class="px-4 py-3">
                 <strong>{{ reservation.guestName }}</strong><br />
                 <small class="text-muted">{{ reservation.guestEmail }}</small>
@@ -236,6 +236,13 @@
       </div>
     </div>
   </div>
+
+  <app-pagination
+    [totalItems]="filteredReservations.length"
+    [itemsPerPage]="itemsPerPage"
+    [currentPage]="currentPage"
+    (pageChange)="onPage($event)"
+  ></app-pagination>
 
   <!-- Modal -->
   <app-reservation-modal

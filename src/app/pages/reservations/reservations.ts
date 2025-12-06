@@ -6,11 +6,12 @@ import { Reservation } from '../../models/reservation';
 import { ReservationTable } from '../../components/reservation-table/reservation-table';
 import { ReservationModal } from '../../components/reservation-modal/reservation-modal';
 import { FormsModule } from '@angular/forms';
+import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, ReservationModal, FormsModule],
+  imports: [CommonModule, HttpClientModule, ReservationModal, FormsModule, Pagination],
   templateUrl: './reservations.html',
   styleUrl: './reservations.css',
 })
@@ -24,6 +25,8 @@ export class Reservations implements OnInit {
   searchTerm = '';
   filterStatus = '';
   statuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
 
   constructor(private reservationService: ReservationService) {}
 
@@ -77,6 +80,13 @@ export class Reservations implements OnInit {
   onStatusChange() {
     this.applyFilters();
   }
+
+  get pagedFilteredReservations(): Reservation[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return (this.filteredReservations || []).slice(start, start + this.itemsPerPage);
+  }
+
+  onPage(page: number) { this.currentPage = page; }
 
   toggleStats() {
     this.showStats = !this.showStats;

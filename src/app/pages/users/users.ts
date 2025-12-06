@@ -5,11 +5,12 @@ import { UserService } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
 import { User } from '../../models/user';
 import { UserModal } from '../../components/user-modal/user-modal';
+import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserModal],
+  imports: [CommonModule, FormsModule, UserModal, Pagination],
   templateUrl: './users.html',
   styleUrls: ['./users.css'],
 })
@@ -25,6 +26,9 @@ export class Users implements OnInit {
   filterStatus = '';
   filterRole = '';
   roles: string[] = ['host', 'guest', 'admin'];
+
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
 
   // Stats
   stats = {
@@ -92,6 +96,15 @@ export class Users implements OnInit {
 
   onRoleChange() {
     this.applyFilters();
+  }
+
+  get pagedFilteredUsers(): User[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return (this.filteredUsers || []).slice(start, start + this.itemsPerPage);
+  }
+
+  onPage(page: number) {
+    this.currentPage = page;
   }
 
   openUserModal(user: User) {

@@ -132,7 +132,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let hotel of filteredHotels; trackBy: trackById">
+            <tr *ngFor="let hotel of pagedFilteredHotels; trackBy: trackById">
               <td class="px-4 py-3">
                 <img
                   [src]="hotel.images[0] || 'https://via.placeholder.com/80'"
@@ -195,6 +195,13 @@
       </div>
     </div>
   </div>
+
+  <app-pagination
+    [totalItems]="filteredHotels.length"
+    [itemsPerPage]="itemsPerPage"
+    [currentPage]="currentPage"
+    (pageChange)="onPage($event)"
+  ></app-pagination>
 
   <!-- Modal -->
   <app-hotel-modal

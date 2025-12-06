@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody class="text-center">
-      <tr *ngFor="let experience of experiences; trackBy: trackById">
+      <tr *ngFor="let experience of pagedExperiences; trackBy: trackById">
         <td>
           <img
             [src]="experience?.images?.[0]"
@@ -46,3 +46,11 @@
     </tbody>
   </table>
 </div>
+
+<app-pagination
+  [totalItems]="experiences.length"
+  [itemsPerPage]="itemsPerPage"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
+  (itemsPerPageChange)="onItemsPerPageChange($event)"
+></app-pagination>

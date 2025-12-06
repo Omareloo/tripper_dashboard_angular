@@ -4,11 +4,12 @@ import { ExperienceService, ExperienceStats } from '../../services/experiences';
 import { CommonModule } from '@angular/common';
 import { ExperienceModal } from '../../components/experience-modal/experience-modal';
 import { FormsModule } from '@angular/forms';
+import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
-  imports: [CommonModule, ExperienceModal, FormsModule],
+  imports: [CommonModule, ExperienceModal, FormsModule, Pagination],
   templateUrl: './experiences.html',
   styleUrl: './experiences.css'
 })
@@ -22,6 +23,8 @@ export class ExperienceComponent implements OnInit {
   searchTerm = '';
   filterCity = '';
   cities: string[] = [];
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
 
   constructor(private experienceService: ExperienceService) {}
 
@@ -70,6 +73,13 @@ export class ExperienceComponent implements OnInit {
   onCityChange() {
     this.applyFilters();
   }
+
+  get pagedFilteredExperiences(): Experience[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return (this.filteredExperiences || []).slice(start, start + this.itemsPerPage);
+  }
+
+  onPage(page: number) { this.currentPage = page; }
 
   toggleStats() {
     this.showStats = !this.showStats;

@@ -166,7 +166,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of filteredUsers; trackBy: trackById">
+            <tr *ngFor="let user of pagedFilteredUsers; trackBy: trackById">
               <td class="px-4 py-3">
                 <img
                   [src]="user.image || 'https://via.placeholder.com/80'"
@@ -224,6 +224,13 @@
       </div>
     </div>
   </div>
+
+  <app-pagination
+    [totalItems]="filteredUsers.length"
+    [itemsPerPage]="itemsPerPage"
+    [currentPage]="currentPage"
+    (pageChange)="onPage($event)"
+  ></app-pagination>
 
   <!-- Modal -->
   <app-user-modal

@@ -132,7 +132,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let experience of filteredExperiences; trackBy: trackById">
+            <tr *ngFor="let experience of pagedFilteredExperiences; trackBy: trackById">
               <td class="px-4 py-3">
                 <img
                   [src]="experience?.images?.[0]"
@@ -190,6 +190,13 @@
       </div>
     </div>
   </div>
+
+      <app-pagination
+        [totalItems]="filteredExperiences.length"
+        [itemsPerPage]="itemsPerPage"
+        [currentPage]="currentPage"
+        (pageChange)="onPage($event)"
+      ></app-pagination>
 
   <!-- Modal -->
   <app-experience-modal

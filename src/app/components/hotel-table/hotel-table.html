@@ -12,8 +12,7 @@
       </tr>
     </thead>
     <tbody class="text-center">
-      @for (hotel of hotels; track $index)
- {
+      @for (hotel of pagedHotels; track $index) {
         <tr>
           <td>
             <img
@@ -41,7 +40,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="7" class="text-muted text-center">
+              <td colspan="7" class="text-muted text-center">
             No hotels found.
           </td>
         </tr>
@@ -49,3 +48,11 @@
     </tbody>
   </table>
 </div>
+
+<app-pagination
+  [totalItems]="hotels.length"
+  [itemsPerPage]="itemsPerPage"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
+  (itemsPerPageChange)="onItemsPerPageChange($event)"
+></app-pagination>

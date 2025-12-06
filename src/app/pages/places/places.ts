@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlaceModal } from '../../components/place-modal/place-modal';
+import { Pagination } from '../../components/pagination/pagination';
 import { Place } from '../../models/place';
 import { PlacesService } from '../../services/places';
 
 @Component({
   selector: 'app-places',
   standalone: true,
-  imports: [CommonModule, PlaceModal, FormsModule],
+  imports: [CommonModule, PlaceModal, FormsModule, Pagination],
   templateUrl: './places.html',
   styleUrl: './places.css',
 })
@@ -23,6 +24,8 @@ export class Places implements OnInit {
   searchTerm = '';
   filterCity = '';
   cities: string[] = [];
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
 
   // Stats
   stats = {
@@ -67,6 +70,15 @@ this.cities = [...new Set(
     this.stats.averageRating = ratings.length > 0 
       ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length 
       : 0;
+  }
+
+  get pagedFilteredPlaces(): any[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return (this.filteredPlaces || []).slice(start, start + this.itemsPerPage);
+  }
+
+  onPage(page: number) {
+    this.currentPage = page;
   }
 
   applyFilters() {

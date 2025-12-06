@@ -5,11 +5,12 @@ import { HotelTable } from '../../components/hotel-table/hotel-table';
 import { HotelModal } from '../../components/hotel-modal/hotel-modal';
 import { HotelService, HotelStats } from '../../services/hotel.service';
 import { FormsModule } from '@angular/forms';
+import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-hotels',
   standalone: true,
-  imports: [CommonModule, HotelModal, FormsModule],
+  imports: [CommonModule, HotelModal, FormsModule, Pagination],
   templateUrl: './hotels.html',
   styleUrl: './hotels.css',
 })
@@ -23,6 +24,8 @@ export class Hotels implements OnInit {
   searchTerm = '';
   filterCity = '';
   cities: string[] = [];
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
 
   constructor(private hotelService: HotelService) {}
 
@@ -71,6 +74,13 @@ export class Hotels implements OnInit {
   onCityChange() {
     this.applyFilters();
   }
+
+  get pagedFilteredHotels(): any[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return (this.filteredHotels || []).slice(start, start + this.itemsPerPage);
+  }
+
+  onPage(page: number) { this.currentPage = page; }
 
   toggleStats() {
     this.showStats = !this.showStats;

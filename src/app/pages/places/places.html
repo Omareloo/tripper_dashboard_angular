@@ -119,7 +119,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let place of filteredPlaces; trackBy: trackById">
+              <tr *ngFor="let place of pagedFilteredPlaces; trackBy: trackById">
               <td class="px-4 py-3">
                 <img
                   [src]="place.images && place.images.length > 0 ? place.images[0] : 'https://via.placeholder.com/80'"
@@ -163,6 +163,13 @@
       </div>
     </div>
   </div>
+
+    <app-pagination
+      [totalItems]="filteredPlaces.length"
+      [itemsPerPage]="itemsPerPage"
+      [currentPage]="currentPage"
+      (pageChange)="onPage($event)"
+    ></app-pagination>
 
   <!-- Modal -->
   <app-place-modal *ngIf="showModal" [editMode]="editMode" [place]="selectedPlace" (onClose)="closeModal()"
