@@ -81,6 +81,11 @@ this.cities = [...new Set(
     this.currentPage = page;
   }
 
+  onItemsPerPageChange(items: number) {
+    this.itemsPerPage = items;
+    this.currentPage = 1;
+  }
+
   applyFilters() {
     this.filteredPlaces = this.places.filter(place => {
       const matchesSearch = place.name.toLowerCase().includes(this.searchTerm.toLowerCase());

@@ -81,6 +81,8 @@ export class ExperienceComponent implements OnInit {
 
   onPage(page: number) { this.currentPage = page; }
 
+  onItemsPerPageChange(items: number) { this.itemsPerPage = items; this.currentPage = 1; }
+
   toggleStats() {
     this.showStats = !this.showStats;
   }

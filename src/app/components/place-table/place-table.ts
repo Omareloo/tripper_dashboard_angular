@@ -25,6 +25,7 @@ export class PlaceTable {
   onPageChange(page: number) {
     this.currentPage = page;
   }
+  
 
   onItemsPerPageChange(items: number) {
     this.itemsPerPage = items;

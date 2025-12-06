@@ -107,6 +107,11 @@ export class Users implements OnInit {
     this.currentPage = page;
   }
 
+  onItemsPerPageChange(items: number) {
+    this.itemsPerPage = items;
+    this.currentPage = 1;
+  }
+
   openUserModal(user: User) {
     this.selectedUser = user;
     this.hostHotels = [];
